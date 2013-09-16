@@ -203,12 +203,17 @@ class VistARPCConnection(RPCConnection):
         signOn = self.makeRequest("XUS SIGNON SETUP", [])
         self.sock.send(signOn)
         connectReply = self.readToEndMarker() # assume always ok
-        accessVerify = self.encrypt(self.access + ";" + self.verify)
-        login = self.makeRequest("XUS AV CODE", [accessVerify])
-        self.sock.send(login)
-        connectReply = self.readToEndMarker()
-        if re.search(r'Not a valid ACCESS CODE/VERIFY CODE pair', connectReply):
-            raise Exception("VistARPCConnection", connectReply)
+        # specific for CPRSDEMO
+        usrInfo = self.makeRequest("XUS GET USER INFO",[])
+        self.sock.send(usrInfo)
+        connectReply = self.readToEndMarker() # assume always ok
+        print connectReply
+        #accessVerify = self.encrypt(self.access + ";" + self.verify)
+        #login = self.makeRequest("XUS AV CODE", [accessVerify])
+        #self.sock.send(login)
+        #connectReply = self.readToEndMarker()
+        #if re.search(r'Not a valid ACCESS CODE/VERIFY CODE pair', connectReply):
+        #    raise Exception("VistARPCConnection", connectReply)
             
         # 4. Context (per connection. CIA has it per request)
         eMSGCONTEXT = self.encrypt(self.context)
